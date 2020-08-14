@@ -7,26 +7,42 @@
 */
 var scrollMe = function () {
     var intervalPool = [];
+    this.currentPool = function () {
+        return intervalPool;
+    }
     /*
         调用该方法使元素滚动
         element需要滚动的元素
         way元素滚动的方向 (up,down)
         speed元素滚动的速度，10≤x
     */
-    this.scroll = function (element, way, speed = 10) {
+    this.scroll = function (element, way, speed) {
+        if (typeof speed == 'undefined' || speed == null) speed = 10;
         var uuid = '';
-        if (element != undefined && element != null) {
+        if (typeof element != 'undefined' && element != null) {
             switch (way) {
                 case 'up': {
                     var interval = bottomToTop(element, speed);
                     uuid = new Date().getTime();
-                    intervalPool.push({ uuid, way, element, interval, speed });
+                    intervalPool.push({
+                        uuid: uuid,
+                        way: way,
+                        element: element,
+                        interval: interval,
+                        speed: speed
+                    });
                     break;
                 }
                 case 'down': {
                     var interval = topToBottom(element, speed);
                     uuid = new Date().getTime();
-                    intervalPool.push({ uuid, way, element, interval, speed });
+                    intervalPool.push({
+                        uuid: uuid,
+                        way: way,
+                        element: element,
+                        interval: interval,
+                        speed: speed
+                    });
                     break;
                 }
                 default: {
@@ -148,21 +164,13 @@ var scrollMe = function () {
         var output = '';
         if (style != undefined && style != null && style != '') {
             var array = style.split(';');
-            array.forEach(sl => {
-                if (sl.indexOf('top') == -1)
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].indexOf('top') == -1)
                     output += sl;
-            });
+            }
         }
         output += "top:" + top + "px";
         $(element).attr('style', output);
-    }
-    function getMore(element) {
-        var html = $(element)[0].outerHTML;
-        var count = Math.ceil($(element).parent().height() / $(element).height());
-        for (var i = 1; i < count; i++)
-            html += html;
-        $(element).attr('data-h', $(element).height());
-        $(element).append(html);
     }
     function setClass(element) {
         if (!$(element).hasClass('scrollMe'))
