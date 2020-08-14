@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="jquery.scrollMe.js"></script>
+    <link href="scrollMe.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div>
+        <!--<div id="top2bottom">
+            <p>啊爸爸爸爸爸爸把骚逼巴萨巴萨赛季贝多芬</p>
+            <img src='https://cn.bing.com/sa/simg/SharedSpriteDesktop_Logov1_2x_030520.png' />
+            <p>干嘛那啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+        </div>-->
+    </div>
+    <div id="bottom2top">
+        <p>啊爸爸爸爸爸爸把骚逼巴萨巴萨赛季贝多芬</p>
+        <img src='https://cn.bing.com/sa/simg/SharedSpriteDesktop_Logov1_2x_030520.png' />
+        <p>干嘛那啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+    </div>
+    <script>
+        $(function () {
+            //var topid = scroll.scroll($("#top2bottom"), 'down', 10);
+            //console.log(topid)
+            var bottomid = scroll.scroll($("#bottom2top"), 'up', 10);
+            console.log(bottomid)
+            //setTimeout(function () {
+            //    scroll.release(id);
+            //}, 10000);
+        });
+    </script>
+</body>
+
+</html>
