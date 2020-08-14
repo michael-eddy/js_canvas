@@ -4,5 +4,12 @@
   -moz-user-select: none;
   -khtml-user-select: none;
   user-select: none;
-  white-space: nowrap;
+}
+
+.scrollMeClone {
+  position: absolute;
+  overflow: hidden;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
 }

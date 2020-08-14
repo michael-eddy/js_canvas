@@ -10,6 +10,48 @@ var scrollMe = function () {
     this.currentPool = function () {
         return intervalPool;
     }
+    this.scrollCicle = function (element, way, speed) {
+        if (typeof speed == 'undefined' || speed == null) speed = 10;
+        var uuid = '';
+        if (typeof element != 'undefined' && element != null) {
+            switch (way) {
+                case 'up': {
+                    var uuid = cicle(element);
+                    var interval = setInterval(function () {
+                        var children = $("#" + uuid).children();
+                        for (var i = 0; i < children.length; i++) {
+                            var p = parseFloat($(children[i]).attr('data-postion'));
+                            if (isNaN(p)) {
+                                p = parseFloat($(children[i]).attr('data-max'));
+                                $(children[i]).attr('data-postion', p);
+                            }
+                            else {
+                                p -= 1;
+                                var min = parseFloat($(children[i]).attr('data-min'));
+                                if (p <= min) {
+                                    console.log(min, p);
+                                    p = parseFloat($(children[i]).attr('data-max'))
+                                }
+                                $(children[i]).attr('data-postion', p)
+                            }
+                            $(children[i]).attr('style', 'top:' + p + 'px');
+                        }
+                    }, speed);
+                    break;
+                }
+                case 'down': {
+                    cicle(element);
+
+                    break;
+                }
+                default: {
+                    console.log('不支持的类型');
+                    break;
+                }
+            }
+        }
+        return uuid;
+    }
     /*
         调用该方法使元素滚动
         element需要滚动的元素
@@ -105,6 +147,25 @@ var scrollMe = function () {
             }
         }
         return item;
+    }
+    function cicle(element) {
+        var ch = $(element).height();
+        var dh = $(element).parent().height();
+        var content = $(element).clone().removeAttr('id');
+        var html = $(content).addClass('scrollMeClone')[0].outerHTML;
+        var context = '';
+        var count = Math.ceil(dh / $(element).height());
+        for (var i = 0; i < count; i++) {
+            var obj = $(html).attr('name', 'node' + i);
+            var min = ch * (count - i), max = dh + (i * ch);
+            $(obj).attr('data-min', -min);
+            $(obj).attr('data-max', max);
+            context += $(obj)[0].outerHTML;
+        }
+        $(element).hide();
+        var uuid = new Date().getTime();
+        $(element).after('<div id="' + uuid + '">' + context + '</div>');
+        return uuid;
     }
     /*
         调用该方法使元素从上到下滚动
