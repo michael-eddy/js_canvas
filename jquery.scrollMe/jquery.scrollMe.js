@@ -10,23 +10,23 @@ var scrollMe = function () {
     /*
         调用该方法使元素滚动
         element需要滚动的元素
-        way元素滚动的方向 (top:,tottom:)
+        way元素滚动的方向 (up,down)
         speed元素滚动的速度，10≤x
     */
     this.scroll = function (element, way, speed = 10) {
         var uuid = '';
         if (element != undefined && element != null) {
             switch (way) {
-                case 'top': {
-                    var interval = topToBottom(element, speed);
-                    uuid = new Date().getTime();
-                    intervalPool.push({ uuid, way, element, interval });
-                    break;
-                }
-                case 'bottom': {
+                case 'up': {
                     var interval = bottomToTop(element, speed);
                     uuid = new Date().getTime();
-                    intervalPool.push({ uuid, way, element, interval });
+                    intervalPool.push({ uuid, way, element, interval, speed });
+                    break;
+                }
+                case 'down': {
+                    var interval = topToBottom(element, speed);
+                    uuid = new Date().getTime();
+                    intervalPool.push({ uuid, way, element, interval, speed });
                     break;
                 }
                 default: {
@@ -69,13 +69,13 @@ var scrollMe = function () {
                     item = intervalPool[index];
                     if (item.interval == null) {
                         switch (item.way) {
-                            case 'top': {
-                                var interval = topToBottom(item.element, item.speed);
+                            case 'up': {
+                                var interval = bottomToTop(item.element, item.speed);
                                 item.interval = interval;
                                 break;
                             }
-                            case 'bottom': {
-                                var interval = bottomToTop(item.element, item.speed);
+                            case 'down': {
+                                var interval = topToBottom(item.element, item.speed);
                                 item.interval = interval;
                                 break;
                             }
@@ -93,7 +93,7 @@ var scrollMe = function () {
     /*
         调用该方法使元素从上到下滚动
     */
-    function topToBottom(element, speed) {
+    function bottomToTop(element, speed) {
         setClass(element);
         var dh = $(element).parent().height();
         var interval = setInterval(function () {
@@ -110,7 +110,7 @@ var scrollMe = function () {
     /*
         调用该方法使元素从下到上滚动
     */
-    function bottomToTop(element, speed) {
+    function topToBottom(element, speed) {
         setClass(element);
         var dh = $(element).parent().height();
         var interval = setInterval(function () {
@@ -155,6 +155,14 @@ var scrollMe = function () {
         }
         output += "top:" + top + "px";
         $(element).attr('style', output);
+    }
+    function getMore(element) {
+        var html = $(element)[0].outerHTML;
+        var count = Math.ceil($(element).parent().height() / $(element).height());
+        for (var i = 1; i < count; i++)
+            html += html;
+        $(element).attr('data-h', $(element).height());
+        $(element).append(html);
     }
     function setClass(element) {
         if (!$(element).hasClass('scrollMe'))
