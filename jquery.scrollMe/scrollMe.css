@@ -13,3 +13,9 @@
   -khtml-user-select: none;
   user-select: none;
 }
+
+.wrap {
+  white-space: normal;
+  word-break: break-all;
+  word-wrap: break-word;
+}

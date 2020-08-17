@@ -1,7 +1,10 @@
 /*
+    https://github.com/michael-eddy/js_ext/tree/master/jquery.scrollMe
     滚动插件 scrollMe
     需要先引用jquery后再引用
-    创建： var id = scroll.scroll(element,way,speed);
+    创建： var id = scroll.scroll(element,way,speed,delay,wrap);
+    element-需要滚动的元素&way-滚动的方向(up：从底部往上,down:从顶部往下)&speed-元素每次移动的像素点
+    (默认为1px)&delay-间隔时间(默认为10ms)&wrap-内容是否自动换行(默认false)
     销毁： scroll.release(id)
     恢复： scroll.resume(id)
 */
@@ -10,12 +13,18 @@ var scrollMe = function () {
     this.currentPool = function () {
         return intervalPool;
     }
-    this.scrollCicle = function (element, way, speed) {
-        if (typeof speed == 'undefined' || speed == null) speed = 10;
+    /*
+        未完成
+    */
+    this.scrollCicle = function (element, way, speed, delay, wrap) {
+        if (typeof speed == 'undefined' || speed == null) speed = 1;
+        if (typeof delay == 'undefined' || delay == null) delay = 10;
         var uuid = '';
         if (typeof element != 'undefined' && element != null) {
             switch (way) {
                 case 'up': {
+                    if (typeof wrap != 'undefined' && wrap == true)
+                        $(element).addClass('wrap');
                     var uuid = cicle(element);
                     var interval = setInterval(function () {
                         var children = $("#" + uuid).children();
@@ -37,6 +46,13 @@ var scrollMe = function () {
                             $(children[i]).attr('style', 'top:' + p + 'px');
                         }
                     }, speed);
+                    intervalPool.push({
+                        uuid: uuid,
+                        way: way,
+                        element: element,
+                        interval: interval,
+                        speed: speed
+                    });
                     break;
                 }
                 case 'down': {
@@ -56,15 +72,20 @@ var scrollMe = function () {
         调用该方法使元素滚动
         element需要滚动的元素
         way元素滚动的方向 (up,down)
-        speed元素滚动的速度，10≤x
+        speed元素每次移动的像素点,
+        delay间隔时间
+        wrap内容是否自动换行
     */
-    this.scroll = function (element, way, speed) {
-        if (typeof speed == 'undefined' || speed == null) speed = 10;
+    this.scroll = function (element, way, speed, delay, wrap) {
+        if (typeof speed == 'undefined' || speed == null) speed = 1;
+        if (typeof delay == 'undefined' || delay == null) delay = 10;
         var uuid = '';
         if (typeof element != 'undefined' && element != null) {
             switch (way) {
                 case 'up': {
-                    var interval = bottomToTop(element, speed);
+                    if (typeof wrap != 'undefined' && wrap == true)
+                        $(element).addClass('wrap');
+                    var interval = bottomToTop(element, speed, delay);
                     uuid = new Date().getTime();
                     intervalPool.push({
                         uuid: uuid,
@@ -76,7 +97,9 @@ var scrollMe = function () {
                     break;
                 }
                 case 'down': {
-                    var interval = topToBottom(element, speed);
+                    if (typeof wrap != 'undefined' && wrap == true)
+                        $(element).addClass('wrap');
+                    var interval = topToBottom(element, speed, delay);
                     uuid = new Date().getTime();
                     intervalPool.push({
                         uuid: uuid,
@@ -170,35 +193,35 @@ var scrollMe = function () {
     /*
         调用该方法使元素从上到下滚动
     */
-    function bottomToTop(element, speed) {
+    function bottomToTop(element, speed, delay) {
         setClass(element);
         var dh = $(element).parent().height();
         var interval = setInterval(function () {
             var top = getTop(element);
             if (top == undefined)
                 top = dh;
-            top -= 1;
+            top -= speed;
             if (top <= -$(element).height())
                 top = dh;
             setStyle(element, top);
-        }, speed);
+        }, delay);
         return interval;
     }
     /*
         调用该方法使元素从下到上滚动
     */
-    function topToBottom(element, speed) {
+    function topToBottom(element, speed, delay) {
         setClass(element);
         var dh = $(element).parent().height();
         var interval = setInterval(function () {
             var top = getTop(element);
             if (top == undefined)
                 top = 0;
-            top += 1;
+            top += speed;
             if (top >= dh)
                 top = 0;
             setStyle(element, top);
-        }, speed);
+        }, delay);
         return interval;
     }
     /*
