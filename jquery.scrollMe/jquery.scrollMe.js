@@ -5,8 +5,9 @@
     创建： var id = scroll.scroll(element,way,speed,delay,wrap);
     element-需要滚动的元素&way-滚动的方向(up：从底部往上,down:从顶部往下)&speed-元素每次移动的像素点
     (默认为1px)&delay-间隔时间(默认为10ms)&wrap-内容是否自动换行(默认false)
-    销毁： scroll.release(id)
+    释放(可恢复)： scroll.release(id)-id为空时释放全部
     恢复： scroll.resume(id)
+    销毁(不可恢复)： scroll.destory(id)-id为空时销毁全部
 */
 var scrollMe = function () {
     var intervalPool = [];
@@ -170,6 +171,26 @@ var scrollMe = function () {
             }
         }
         return item;
+    }
+    /*
+        调用该方法销毁滚动
+        uuid创建滚动时返回的id
+    */
+    this.destory = function (uuid) {
+        for (var index = 0; index < intervalPool.length; index++) {
+            var item = intervalPool[index];
+            if (uuid != null && uuid != undefined && uuid == item.uuid) {
+                clearInterval(item.interval);
+                intervalPool.splice(index, 1);
+                break;
+            }
+            else if (uuid == null || uuid == undefined) {
+                clearInterval(item.interval);
+            }
+        }
+        if (uuid == null || uuid == undefined) {
+            intervalPool = [];
+        }
     }
     function cicle(element) {
         var ch = $(element).height();
